@@ -120,7 +120,7 @@ def applyOcr(imgUrl):
         colored = cv2.cvtColor(dark_spun, cv2.COLOR_GRAY2RGB)
         colored = 255 - colored
         pil_image = Image.fromarray(colored)
-        char_result = image_to_string(pil_image, config="--psm 10 --oem 0")
+        char_result = image_to_string(pil_image, config="--psm 10 --oem 0").strip("\n\t\r ")
         logger.debug(f"PARTIAL OCR RESULT: {char_result}")
         if char_result is not None and len(char_result) > 0:
             moments = cv2.moments(contour)

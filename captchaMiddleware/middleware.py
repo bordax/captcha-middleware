@@ -4,7 +4,7 @@ import logging
 import locale
 from scrapy.http import FormRequest
 from scrapy.exceptions import IgnoreRequest
-from captchaMiddleware.solver import solveCaptcha
+from solver import solveCaptcha
 from bs4 import BeautifulSoup
 
 logger = logging.getLogger(__name__)
@@ -21,9 +21,9 @@ class CaptchaMiddleware(object):
         # Check that the form mentions something about CAPTCHA
         language, encoding = locale.getlocale(category=locale.LC_MESSAGES)
         if language is None:
-            language = KEYWORDS.keys()[0]; # Must be American
-        if language[0:2] in KEYWORDS.keys():
-            for keyword in KEYWORDS[language[0:2]]:
+            language = list(KEYWORDS.keys())[0]; # Must be American
+        if language[0:2] in list(KEYWORDS.keys()):
+            for keyword in list(KEYWORDS[language[0:2]]):
                 if keyword in text.lower():
                     return True
             return False

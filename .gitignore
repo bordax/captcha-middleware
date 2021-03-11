@@ -6,3 +6,5 @@ dist/
 env/
 .idea/
 
+**/.venv
+**/.vscode

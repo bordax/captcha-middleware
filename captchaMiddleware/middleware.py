@@ -66,7 +66,7 @@ class CaptchaMiddleware(object):
         #     return None
         # # Now grab the URL from the only possible img
         # imgUrl = possibleImages[0]["src"]
-        image_url = captcha_form.xpath("//div[@class='a-row a-text-center']/img/@src")
+        image_url = captcha_form.xpath("//div[@class='a-row a-text-center']/img/@src").get()
         logger.debug(f"Captcha image URL: {image_url}")
         return image_url
 

@@ -4,7 +4,7 @@ import logging
 import locale
 from scrapy.http import FormRequest
 from scrapy.exceptions import IgnoreRequest
-from solver import solveCaptcha
+from captchaMiddleware.solver import solveCaptcha
 from bs4 import BeautifulSoup
 
 logger = logging.getLogger(__name__)

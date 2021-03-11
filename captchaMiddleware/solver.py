@@ -98,7 +98,8 @@ def applyOcr(imgUrl):
     # if it's black on white:
     gray_img = 255 - gray_img
     _, mask = cv2.threshold(gray_img, THRESHOLD, 255, cv2.THRESH_BINARY)
-    mask, contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    #mask, contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     letters = {}  # x coordinate ↦ predicted letter
     for c, contour in enumerate(contours):
         rect = cv2.minAreaRect(contour)  # Find a rotated bounding box

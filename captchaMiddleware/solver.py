@@ -62,28 +62,28 @@ def adjustAngle(angle):
     if angle < 0:
         if abs(angle+90) < abs(angle):
             # rotated too far
-            return angle + 90;
+            return angle + 90
         else:
-            return angle;
+            return angle
     else:
         if abs(angle-90) < angle:
             # rotated too far
-            return angle - 90;
+            return angle - 90
         else:
-            return angle;
+            return angle
 
 
 def solveCaptcha(imgUrl, brazen=False):
-    result = applyOcr(imgUrl);
+    result = applyOcr(imgUrl)
     if isPossible(result):
-        return result;
+        return result
     elif brazen:
         # Guess something
-        result = adjustSuggestion(result);
-        logger.debug("CAPTCHA was adjusted to %s", result);
-        return result;
+        result = adjustSuggestion(result)
+        logger.debug("CAPTCHA was adjusted to %s", result)
+        return result
     else:
-        return None;
+        return None
 
 
 def applyOcr(imgUrl):

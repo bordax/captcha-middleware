@@ -92,9 +92,9 @@ class CaptchaMiddleware(object):
         captchaUrl = self.findCaptchaImageUrl(response.text, response)
         if captchaUrl is None:
             return response; # No CAPTCHA is present
-        elif request.meta.get(RETRY_KEY, self.MAX_CAPTCHA_ATTEMPTS) == self.MAX_CAPTCHA_ATTEMPTS:
-            logger.warning("Too many CAPTCHA attempts; surrendering.")
-            raise IgnoreRequest
+        # elif request.meta.get(RETRY_KEY, self.MAX_CAPTCHA_ATTEMPTS) == self.MAX_CAPTCHA_ATTEMPTS:
+        #     logger.warning("Too many CAPTCHA attempts; surrendering.")
+        #     raise IgnoreRequest
         captchaSolution = solveCaptcha(imgUrl=captchaUrl, brazen=True)
         if captchaSolution is None:
             logger.error("CAPTCHA page detected, but no solution was proposed.")

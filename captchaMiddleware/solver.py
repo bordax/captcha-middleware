@@ -141,5 +141,5 @@ def applyOcr(imgUrl):
     for xCentre in sorted(letters.keys()):
         word_solution += letters[xCentre].strip("\n\t\r ")
     #word_solution = word_solution.replace(' ', '').replace('\n', '').replace('\t', '')
-    logger.debug(f"OCR saw {word_solution} with len={len(word_solution)}")
+    logger.debug(f"OCR saw {repr(word_solution)} with len={len(word_solution)}")
     return word_solution

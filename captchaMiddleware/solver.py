@@ -92,7 +92,7 @@ def applyOcr(imgUrl):
     :param imgUrl: The URL for a CAPTCHA image.
     :return: The string in the imgae.
     """
-    response = urlopen("file://" + imgUrl)
+    response = urlopen(imgUrl)
     img = np.asarray(bytearray(response.read()), dtype="uint8")
     gray_img = cv2.imdecode(img, cv2.IMREAD_GRAYSCALE)
     # if it's black on white:

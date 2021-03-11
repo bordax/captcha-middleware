@@ -140,5 +140,6 @@ def applyOcr(imgUrl):
     word_solution = ""
     for xCentre in sorted(letters.keys()):
         word_solution += letters[xCentre]
+    word_solution = word_solution.replace(' ', '').replace('\n', '')
     logger.debug("OCR saw %s", word_solution)
     return word_solution

@@ -31,32 +31,44 @@ class CaptchaMiddleware(object):
             logger.warning("CAPTCHA keywords have not been set for this locale.")
             return None
 
-    def findCaptchaUrl(self, page):
-        soup = BeautifulSoup(page, 'lxml')
-        images = soup.find_all("img")
-        forms = soup.find_all("form")
-        if len(forms) != 1 or len(images) == 0:
-            # Assert that a CAPTCHA page only has one form: the CAPTCHA form
-            # Assert that the CAPTCHA image is tagged as <img>
+    def findCaptchaImageUrl(self, page, response):
+        # soup = BeautifulSoup(page, 'lxml')
+        # images = soup.find_all("img")
+        # forms = soup.find_all("form")
+
+        captcha_form = response.xpath("//form[@action='/errors/validateCaptcha']")
+        if not captcha_form:
+            logger.debug(f'No captcha found on {response.url}')
             return None
-        if not self.containsCaptchaKeywords(forms[0].text):
-            return None
-        possibleImages = []
-        for image in images:
-            if image in forms[0].descendants:
-                possibleImages.append(image)
-        if len(possibleImages) > 1:
-            # todo: use NLP on the URLs or something. Amazon writes "Captcha" there
-            logger.error("To do: resolve ambiguity when multiple images appear \
-                in the CAPTCHA form. Maybe this wasn't a CAPTCHA form.")
-            return None
-        elif len(possibleImages) == 0:
-            logger.warning("Unable to find an image in the CAPTCHA form. Maybe \
-                this wasn't a CAPTCHA form.")
-            return None
-        # Now grab the URL from the only possible img
-        imgUrl = possibleImages[0]["src"]
-        return imgUrl
+
+        logger.info(f'Captcha found on {response.url}')
+
+        # if len(forms) != 1 or len(images) == 0:
+        #     # Assert that a CAPTCHA page only has one form: the CAPTCHA form
+        #     # Assert that the CAPTCHA image is tagged as <img>
+        #     return None
+        # #if not self.containsCaptchaKeywords(forms[0].text):
+        # if not self.is_captcha(response)
+        #     return None
+
+        # possibleImages = []
+        # for image in images:
+        #     if image in forms[0].descendants:
+        #         possibleImages.append(image)
+        # if len(possibleImages) > 1:
+        #     # todo: use NLP on the URLs or something. Amazon writes "Captcha" there
+        #     logger.error("To do: resolve ambiguity when multiple images appear \
+        #         in the CAPTCHA form. Maybe this wasn't a CAPTCHA form.")
+        #     return None
+        # elif len(possibleImages) == 0:
+        #     logger.warning("Unable to find an image in the CAPTCHA form. Maybe \
+        #         this wasn't a CAPTCHA form.")
+        #     return None
+        # # Now grab the URL from the only possible img
+        # imgUrl = possibleImages[0]["src"]
+        image_url = captcha_form.xpath("//div[@class='a-row a-text-center']/img/@src")
+        logger.debug(f"Captcha image URL: {image_url}")
+        return image_url
 
     def findCaptchaField(self, page):
         soup = BeautifulSoup(page, 'lxml')
@@ -77,7 +89,7 @@ class CaptchaMiddleware(object):
             return possibleFields[0]["name"]
 
     def process_response(self, request, response, spider):
-        captchaUrl = self.findCaptchaUrl(response.text)
+        captchaUrl = self.findCaptchaImageUrl(response.text, response)
         if captchaUrl is None:
             return response; # No CAPTCHA is present
         elif request.meta.get(RETRY_KEY, self.MAX_CAPTCHA_ATTEMPTS) == self.MAX_CAPTCHA_ATTEMPTS:

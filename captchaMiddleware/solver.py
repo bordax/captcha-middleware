@@ -2,12 +2,8 @@
 
 from PIL import Image, ImageFilter
 from pytesseract import image_to_string
-try:
     from urllib.request import urlopen
-except ImportError:
-    from urllib2 import urlopen
 import numpy as np
-import scipy.misc
 from string import ascii_uppercase
 import random
 import logging

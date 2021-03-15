@@ -41,6 +41,7 @@ class CaptchaMiddleware(object):
         logger.debug(f"Captcha image URL: {image_url}")
         return image_url
 
+
     def findCaptchaFields(self, response):
         fields = {
             'amzn': response.xpath("//form[@action='/errors/validateCaptcha']/input[@name='amzn']/@value").get(),

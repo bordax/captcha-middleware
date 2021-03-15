@@ -2,7 +2,7 @@
 
 from PIL import Image, ImageFilter
 from pytesseract import image_to_string
-    from urllib.request import urlopen
+from urllib.request import urlopen
 import numpy as np
 from string import ascii_uppercase
 import random

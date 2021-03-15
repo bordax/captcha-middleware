@@ -5,7 +5,7 @@ import locale
 from scrapy.http import FormRequest
 from scrapy.exceptions import IgnoreRequest
 from captchaMiddleware.solver import solveCaptcha
-from bs4 import BeautifulSoup
+
 
 logger = logging.getLogger(__name__)
 
@@ -41,25 +41,13 @@ class CaptchaMiddleware(object):
         logger.debug(f"Captcha image URL: {image_url}")
         return image_url
 
-    def findCaptchaField(self, page):
-        soup = BeautifulSoup(page, 'lxml')
-        forms = soup.find_all("form")
-
-        if len(forms) != 1:
-            logger.debug("Unable to find a form on this page.")
-            return None
-    
-        formFields = forms[0].find_all("input")
-        possibleFields = list(filter(lambda field: field["type"] != "hidden", formFields))
-        if len(possibleFields) > 1:
-            logger.error("Ambiguity when finding form field for CAPTCHA.")
-            # Maybe we could use NLP to decide
-            return None
-        elif len(possibleFields) == 0:
-            logger.error("Unable to find CAPTCHA form field.")
-            return None
-        else:
-            return possibleFields[0]["name"]
+    def findCaptchaFields(self, response):
+        fields = {
+            'amzn': response.xpath("//form[@action='/errors/validateCaptcha']/input[@name='amzn']/@value").get(),
+            'amzn-r': response.xpath("//form[@action='/errors/validateCaptcha']/input[@name='amzn-r']/@value").get(),
+            'field-keywords': ''
+        }
+        return fields
 
     def process_response(self, request, response, spider):
         captchaUrl = self.findCaptchaImageUrl(response)
@@ -74,7 +62,8 @@ class CaptchaMiddleware(object):
             raise IgnoreRequest
         # Return a request to submit the captcha
         logger.info("Submitting solution %s for CAPTCHA at %s", captchaSolution, captchaUrl)
-        formRequest = FormRequest.from_response(
-            response, formnumber=0, formdata={self.findCaptchaField(response.text):captchaSolution})
+        form_fields = self.findCaptchaFields(response)
+        form_fields['field-keywords'] = captchaSolution
+        formRequest = FormRequest.from_response(response, formnumber=0, formdata=form_fields)
         formRequest.meta[RETRY_KEY] = request.meta.get('captcha_retries', 0) + 1
         return formRequest

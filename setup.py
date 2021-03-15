@@ -29,7 +29,6 @@ setup(
         'numpy',
         'scipy',
         'scrapy',
-        'bs4',
         'opencv-python',
         'imutils'
     ],

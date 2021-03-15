@@ -98,7 +98,7 @@ def applyOcr(imgUrl):
     # if it's black on white:
     gray_img = 255 - gray_img
     _, mask = cv2.threshold(gray_img, THRESHOLD, 255, cv2.THRESH_BINARY)
-    #mask, contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
     contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     letters = {}  # x coordinate ↦ predicted letter
     for c, contour in enumerate(contours):
@@ -129,17 +129,17 @@ def applyOcr(imgUrl):
                 xCentre += 1  # Avoid key clash
             letters[xCentre] = char_result.upper()
             if logger.getEffectiveLevel() <= logging.DEBUG:
-                #scipy.misc.imsave(char_result + ".jpg", pil_image)
                 pil_image.save(char_result + ".jpg")
         else:
             logger.debug("No result for character %d", c)
             if logger.getEffectiveLevel() <= logging.DEBUG:
-                #scipy.misc.imsave("unknown letter {c}.jpg".format(c=c), pil_image)
                 pil_image.save("unknown letter {c}.jpg".format(c=c))
+
     # Adjust letters based on X axis
     word_solution = ""
     for xCentre in sorted(letters.keys()):
         word_solution += letters[xCentre].strip("\n\t\r ")
-    #word_solution = word_solution.replace(' ', '').replace('\n', '').replace('\t', '')
+
     logger.debug(f"OCR saw {repr(word_solution)} with len={len(word_solution)}")
+
     return word_solution

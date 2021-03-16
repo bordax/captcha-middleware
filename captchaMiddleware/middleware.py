@@ -43,6 +43,7 @@ class CaptchaMiddleware(object):
         logger.info("Submitting solution %s for CAPTCHA at %s", captcha_solution, captcha_url)
         form_fields = self.find_captcha_fields(response)
         form_fields['field-keywords'] = captcha_solution
+        logger.debug(f"Form fields: {form_fields}")
         form_request = FormRequest.from_response(response, formdata=form_fields)
 
         return form_request

@@ -117,19 +117,21 @@ def applyOcr(imgUrl):
         colored = 255 - colored
         pil_image = Image.fromarray(colored)
         char_result = image_to_string(pil_image, config="--psm 10 --oem 0").strip("\n\x0c ")
-        logger.debug(f"PARTIAL OCR RESULT: {char_result}")
+        #logger.debug(f"PARTIAL OCR RESULT: {char_result}")
         if char_result is not None and len(char_result) > 0:
             moments = cv2.moments(contour)
             xCentre = int(moments["m10"]/moments["m00"])
             while xCentre in letters:
                 xCentre += 1  # Avoid key clash
             letters[xCentre] = char_result.upper()
-            if logger.getEffectiveLevel() <= logging.DEBUG:
-                pil_image.save(char_result + ".jpg")
-        else:
-            logger.debug("No result for character %d", c)
-            if logger.getEffectiveLevel() <= logging.DEBUG:
-                pil_image.save("unknown letter {c}.jpg".format(c=c))
+        #     if logger.getEffectiveLevel() <= logging.DEBUG:
+        #         if char_result == '.':
+        #             char_result = 'dot'
+        #         pil_image.save(char_result + ".jpg")
+        # else:
+        #     logger.debug("No result for character %d", c)
+        #     if logger.getEffectiveLevel() <= logging.DEBUG:
+        #         pil_image.save("unknown letter {c}.jpg".format(c=c))
 
     # Adjust letters based on X axis
     word_solution = ""
